@@ -44,13 +44,14 @@ try:
         raise RuntimeError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
 
     creds = service_account.Credentials.from_service_account_file(credentials_path)
-
+    with open(credentials_path, "r") as f:
+        project_id = json.load(f)["project_id"]
     vertexai.init(
         project="patientsafe", 
         location="us-central1",
         credentials=creds
     )
-    logger.info("Vertex AI initialized successfully with service account")
+    logger.info(f"Vertex AI initialized successfully with project_id={project_id}")
 except Exception as e:
     logger.error(f"Failed to initialize Vertex AI: {str(e)}")
 
