@@ -43,6 +43,8 @@ jobs:
              docker stop gemini25pro_app
              docker rm gemini25pro_app
           }
+          # Define temp key path on Windows
+          $keyPath = "$env:TEMP\gcp-key.json"
           # Write secret into temp file
           $env:GCP_SERVICE_ACCOUNT_KEY | Out-File -Encoding utf8 /tmp/gcp-key.json
           # Run container with credentials mounted + env var
