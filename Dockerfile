@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the Flask port
-EXPOSE 5002
+EXPOSE 8002
 
 # Run the Flask app
 CMD ["python", "gemini25pro.py"]
