@@ -19,6 +19,7 @@ from google.api_core import exceptions
 from google.api_core.retry import Retry
 from google.api_core.exceptions import FailedPrecondition, InternalServerError
 from google.cloud import aiplatform_v1
+from google.oauth2 import service_account
 
 import logging
 import sys
@@ -36,9 +37,20 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # Allow Unicode characters in JSON responses
 
 # Initialize Vertex AI
+# Initialize Vertex AI with credentials
 try:
-    vertexai.init(project="patientsafe", location="us-central1")
-    logger.info("Vertex AI initialized successfully")
+    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+    if not credentials_path:
+        raise RuntimeError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+
+    creds = service_account.Credentials.from_service_account_file(credentials_path)
+
+    vertexai.init(
+        project="patientsafe", 
+        location="us-central1",
+        credentials=creds
+    )
+    logger.info("Vertex AI initialized successfully with service account")
 except Exception as e:
     logger.error(f"Failed to initialize Vertex AI: {str(e)}")
 
