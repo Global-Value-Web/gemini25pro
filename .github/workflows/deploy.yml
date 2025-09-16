@@ -43,4 +43,12 @@ jobs:
              docker stop gemini25pro_app
              docker rm gemini25pro_app
           }
-          docker run -d --restart=always -p 8002:8002 --name gemini25pro_app $IMAGE_NAME
+          # Write secret into temp file
+          $env:GCP_SERVICE_ACCOUNT_KEY | Out-File -Encoding utf8 /tmp/gcp-key.json
+          # Run container with credentials mounted + env var
+          docker run -d --restart=always -p 8002:8002 `
+           -v /tmp/gcp-key.json:/app/gcp-key.json `
+           -e GOOGLE_APPLICATION_CREDENTIALS=/app/gcp-key.json `
+           --name gemini25pro_app $IMAGE_NAME
+        env:
+          GCP_SERVICE_ACCOUNT_KEY: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
