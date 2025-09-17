@@ -19,7 +19,6 @@ from google.api_core import exceptions
 from google.api_core.retry import Retry
 from google.api_core.exceptions import FailedPrecondition, InternalServerError
 from google.cloud import aiplatform_v1
-from google.oauth2 import service_account
 
 import logging
 import sys
@@ -37,33 +36,9 @@ app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False  # Allow Unicode characters in JSON responses
 
 # Initialize Vertex AI
-# Initialize Vertex AI with credentials
 try:
-    credentials_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-    if not credentials_path:
-        raise RuntimeError("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
-
-    creds = service_account.Credentials.from_service_account_file(credentials_path)
-    # Read project_id from JSON
-    with open(credentials_path, "r") as f:
-        service_account_info = json.load(f)
-    project_id = service_account_info.get("project_id")
-    if not project_id:
-        raise RuntimeError("project_id not found in service account JSON")
-    vertexai.init(
-        project="patientsafe", 
-        location="us-central1",
-        credentials=creds
-    )
-    try:
-       from vertexai.generative_models import GenerativeModel
-       test_model = GenerativeModel("gemini-1.5-flash")
-       test_response = test_model.generate_content("ping test")
-       logger.info(f"Vertex AI test response: {test_response.text[:100]}")
-    except Exception as e:
-       logger.error(f"Vertex AI test failed: {e}", exc_info=True)
-
-    logger.info(f"Vertex AI initialized successfully with project_id={project_id}")
+    vertexai.init(project="patientsafe", location="us-central1")
+    logger.info("Vertex AI initialized successfully")
 except Exception as e:
     logger.error(f"Failed to initialize Vertex AI: {str(e)}")
 
