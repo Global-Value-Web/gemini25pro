@@ -46,7 +46,7 @@ jobs:
           # Define temp key path on Windows
           $keyPath = Join-Path $env:TEMP "gcp-key.json"
           # Write secret into temp file
-          $env:GCP_SERVICE_ACCOUNT_KEY | Set-Content -NoNewline -Encoding utf8 -Path $keyPath
+          $env:GCP_SERVICE_ACCOUNT_KEY | Out-File -FilePath $keyPath -Encoding utf8NoBOM
           # Confirm it's a file
           Get-Item $keyPath
           # Run container with credentials mounted + env var
